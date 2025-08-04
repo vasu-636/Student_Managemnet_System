@@ -7,68 +7,126 @@ const phoneInput = document.getElementById("contactno");
 const courseSelect = document.getElementById("course");
 const stuInfo = document.getElementById("stuinfo");
 
+
+
 function addStudent() {
-    const grid = grIdInput.value.trim();
-    const name = nameInput.value.trim();
-    const age = ageInput.value.trim();
-    const phone = phoneInput.value.trim();
-    const course = courseSelect.value;
+  const grid = grIdInput.value.trim();
+  const name = nameInput.value.trim();
+  const age = ageInput.value.trim();
+  const phone = phoneInput.value.trim();
+  const course = courseSelect.value;
 
-    if (!grid || !name || !age || !phone || course === "-1") {
-        alert("Please fill all the fields correctly.");
-        return;
-    }
+  // Validate GR ID
+  if (grid === "") {
+    Swal.fire({
+      title: "Missing GR ID",
+      text: "Please enter the GR ID.",
+      icon: "warning"
+    });
+    return;
+  }
 
-    const student = {
-        grid,
-        name,
-        age,
-        phone,
-        course
-    };
+  // Validate Name
+  if (name === "") {
+    Swal.fire({
+      title: "Missing Name",
+      text: "Please enter the student's name.",
+      icon: "warning"
+    });
+    return;
+  }
 
-    students.push(student);
+  // Validate Phone Number
+  if (phone === "") {
+    Swal.fire({
+      title: "Missing Phone Number",
+      text: "Please enter a phone number.",
+      icon: "warning"
+    });
+    return;
+  }
 
-    // Clear inputs
-    grIdInput.value = "";
-    nameInput.value = "";
-    ageInput.value = "";
-    phoneInput.value = "";
-    courseSelect.value = "-1";
+  // Validate Course Selection
+  if (course === "-1") {
+    Swal.fire({
+      title: "Course Not Selected",
+      text: "Please select a course.",
+      icon: "warning"
+    });
+    return;
+  }
 
-    renderStudents();
+  // Optional: Check for duplicate GR ID
+  if (students.some(s => s.grid === grid)) {
+    Swal.fire({
+      title: "Duplicate GR ID",
+      text: "A student with this GR ID already exists.",
+      icon: "error"
+    });
+    return;
+  }
+
+  // If all validations pass, add student
+  const student = {
+    grid,
+    name,
+    age,
+    phone,
+    course
+  };
+
+  students.push(student);
+
+  // Clear form inputs
+  grIdInput.value = "";
+  nameInput.value = "";
+  ageInput.value = "";
+  phoneInput.value = "";
+  courseSelect.value = "-1";
+
+  // Optional: Show success message
+  Swal.fire({
+    title: "Success",
+    text: "Student added successfully!",
+    icon: "success",
+    timer: 1500,
+    showConfirmButton: false
+  });
+
+  renderStudents();
 }
 
+
 function deleteStudent(grid) {
-    const student = students.find(s => s.grid === grid);
-    if (confirm(`Are you sure you want to delete GR ID ${student.grid} (${student.name})?`)) {
-        students = students.filter(student => student.grid !== grid);
-        renderStudents();
-    }
+  const student = students.find(s => s.grid === grid);
+  if (confirm(`Are you sure you want to delete GR ID ${student.grid} (${student.name})?`)) {
+    students = students.filter(student => student.grid !== grid);
+    renderStudents();
+  }
 }
 
 function getCourseClass(course) {
-    switch (course) {
-        case 'FSD': return 'course-fsd';
-        case 'UI/UX': return 'course-uiux';
-        case 'AI/ML': return 'course-aiml';
-        default: return '';
-    }
+  switch (course) {
+    case 'FSD': return 'course-fsd';
+    case 'UI/UX': return 'course-uiux';
+    case 'AI/ML': return 'course-aiml';
+    default: return '';
+  }
 }
 
 function renderStudents() {
-    if (students.length === 0) {
-        stuInfo.innerHTML = `
+  if (students.length === 0) {
+    stuInfo.innerHTML = `
           <div class="empty-message">
             <i class="fas fa-users"></i>
             <h5>No students added yet</h5>
             <p class="mb-0">Add your first student using the form above.</p>
           </div>
         `;
-        return;
-    }
+    return;
+  }
 
-    let html = `
+  let html = `
         <table class="table table-hover mb-0">
           <thead>
             <tr>
@@ -83,8 +141,8 @@ function renderStudents() {
           <tbody>
       `;
 
-    students.forEach(student => {
-        html += `
+  students.forEach(student => {
+    html += `
           <tr>
             <td><span class="student-id">#${student.grid}</span></td>
             <td>${student.name}</td>
@@ -102,10 +160,10 @@ function renderStudents() {
             </td>
           </tr>
         `;
-    });
+  });
 
-    html += `</tbody></table>`;
-    stuInfo.innerHTML = html;
+  html += `</tbody></table>`;
+  stuInfo.innerHTML = html;
 }
 
 renderStudents();
