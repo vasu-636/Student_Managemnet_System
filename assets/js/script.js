@@ -99,11 +99,32 @@ function addStudent() {
 
 function deleteStudent(grid) {
   const student = students.find(s => s.grid === grid);
-  if (confirm(`Are you sure you want to delete GR ID ${student.grid} (${student.name})?`)) {
-    students = students.filter(student => student.grid !== grid);
-    renderStudents();
-  }
+
+  Swal.fire({
+    title: `Delete ${student.name}?`,
+    text: `Are you sure you want to delete GR ID ${student.grid}?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      students = students.filter(student => student.grid !== grid);
+      renderStudents();
+
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'The student has been removed.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
+  });
 }
+
 
 function getCourseClass(course) {
   switch (course) {
